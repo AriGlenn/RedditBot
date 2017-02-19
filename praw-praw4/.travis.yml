@@ -1,0 +1,24 @@
+after_success: coveralls
+cache: pip
+install:
+  - yes | pip uninstall py pytest
+  - pip install coveralls flake8 pydocstyle sphinx sphinx_rtd_theme
+  - python setup.py install
+language: python
+matrix:
+  allow_failures:
+    - python: nightly
+  fast_finish: true
+python:
+  - 2.7
+  - 3.3
+  - 3.4
+  - 3.5
+  - 3.6
+  - nightly
+sudo: false
+script:
+  - flake8 --exclude=docs
+  - pydocstyle praw
+  - if [ "$TRAVIS_PYTHON_VERSION" != "3.3" ]; then sphinx-build -W docs/ /tmp/foo; fi
+  - coverage run --source=praw setup.py test
